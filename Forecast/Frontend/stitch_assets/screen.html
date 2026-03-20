@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wind Forecast Monitoring Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2463eb",
+                        "secondary": "#16a34a",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "text-main-light": "#0f172a",
+                        "text-main-dark": "#f8fafc",
+                        "text-muted-light": "#64748b",
+                        "text-muted-dark": "#94a3b8",
+                        "border-light": "#e2e8f0",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-soft { animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark min-h-screen antialiased flex">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-border-light dark:border-border-dark bg-white dark:bg-surface-dark flex-shrink-0 flex flex-col hidden lg:flex">
+<div class="h-16 flex items-center px-6 gap-3 border-b border-border-light dark:border-border-dark">
+<div class="bg-primary rounded-lg p-1.5 flex items-center justify-center text-white">
+<span class="material-symbols-outlined !text-xl">air</span>
+</div>
+<span class="font-bold text-lg tracking-tight">WindPro</span>
+</div>
+<nav class="flex-1 p-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg font-medium" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-muted-light dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">insights</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-muted-light dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">map</span>
+<span>Spatial Map</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-text-muted-light dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">history</span>
+<span>Historical Logs</span>
+</a>
+<div class="pt-4 pb-2 px-3">
+<span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest">System</span>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 text-text-muted-light dark:text-text-muted-dark hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span>Configuration</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-light dark:border-border-dark">
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
+<div class="flex items-center gap-2 mb-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-wider">Live System</span>
+</div>
+<p class="text-[11px] text-text-muted-light dark:text-text-muted-dark leading-tight">Last updated: 10:15 AM<br/>Status: Nominal</p>
+</div>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+<!-- Header -->
+<header class="h-16 bg-white/80 dark:bg-surface-dark/80 backdrop-blur-md sticky top-0 z-10 border-b border-border-light dark:border-border-dark flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<h1 class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Dashboard / Forecast Analysis</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-border-light dark:border-border-dark">
+<span class="text-xs font-medium text-text-muted-light dark:text-text-muted-dark">Model:</span>
+<span class="text-xs font-bold text-primary">ECMWF v4.2</span>
+</div>
+<button class="p-2 rounded-lg text-text-muted-light dark:text-text-muted-dark hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/20">
+                    JD
+                </div>
+</div>
+</header>
+<main class="p-6 space-y-6 max-w-[1600px] mx-auto w-full">
+<!-- Filter Bar -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-border-light dark:border-border-dark">
+<div class="flex flex-col gap-1.5">
+<label class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase">Date Range</label>
+<div class="flex items-center gap-2">
+<input class="flex-1 text-xs rounded-lg border-border-light dark:border-border-dark bg-slate-50 dark:bg-background-dark py-1.5" type="date" value="2023-10-24"/>
+<span class="text-text-muted-light">→</span>
+<input class="flex-1 text-xs rounded-lg border-border-light dark:border-border-dark bg-slate-50 dark:bg-background-dark py-1.5" type="date" value="2023-10-26"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase">Station Cluster</label>
+<select class="text-xs rounded-lg border-border-light dark:border-border-dark bg-slate-50 dark:bg-background-dark py-1.5">
+<option>North Sea - All Assets</option>
+<option>Dogger Bank Cluster</option>
+<option>Hornsea Two</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between items-center">
+<label class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase">Horizon (48h)</label>
+</div>
+<input class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary mt-2" max="48" min="0" type="range" value="48"/>
+</div>
+<div class="flex items-end">
+<button class="w-full bg-primary hover:bg-primary/90 text-white text-xs font-bold py-2 rounded-lg transition-colors">
+                        Refresh Dataset
+                    </button>
+</div>
+</section>
+<!-- Metrics with Sparklines -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-surface-dark rounded-xl p-4 border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest">MAE (MW)</span>
+<span class="text-[10px] font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">-2.1%</span>
+</div>
+<div class="text-2xl font-bold leading-tight">14.2</div>
+<div class="mt-4 h-8 w-full flex items-end gap-[2px]">
+<div class="h-1/2 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-2/3 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-3/4 flex-1 bg-primary/40 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-1/3 flex-1 bg-primary/30 rounded-t-sm"></div>
+<div class="h-2/3 flex-1 bg-primary/50 rounded-t-sm"></div>
+<div class="h-3/4 flex-1 bg-primary/30 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-primary/60 rounded-t-sm"></div>
+<div class="h-1/3 flex-1 bg-primary rounded-t-sm"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-4 border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest">Bias %</span>
+<span class="text-[10px] font-bold text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded">+0.5%</span>
+</div>
+<div class="text-2xl font-bold leading-tight">+1.25%</div>
+<div class="mt-4 h-8 w-full flex items-end gap-[2px]">
+<div class="h-1/3 flex-1 bg-red-500/20 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-red-500/20 rounded-t-sm"></div>
+<div class="h-2/3 flex-1 bg-red-500/40 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-red-500/20 rounded-t-sm"></div>
+<div class="h-1/3 flex-1 bg-red-500/30 rounded-t-sm"></div>
+<div class="h-3/4 flex-1 bg-red-500/50 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-red-500/30 rounded-t-sm"></div>
+<div class="h-2/3 flex-1 bg-red-500/60 rounded-t-sm"></div>
+<div class="h-3/4 flex-1 bg-red-500 rounded-t-sm"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-4 border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest">P99 Error</span>
+<span class="text-[10px] font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">-5.4%</span>
+</div>
+<div class="text-2xl font-bold leading-tight">45.8</div>
+<div class="mt-4 h-8 w-full flex items-end gap-[2px]">
+<div class="h-3/4 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-2/3 flex-1 bg-primary/40 rounded-t-sm"></div>
+<div class="h-3/4 flex-1 bg-primary/20 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-primary/30 rounded-t-sm"></div>
+<div class="h-1/3 flex-1 bg-primary/50 rounded-t-sm"></div>
+<div class="h-1/2 flex-1 bg-primary/30 rounded-t-sm"></div>
+<div class="h-1/3 flex-1 bg-primary/60 rounded-t-sm"></div>
+<div class="h-1/4 flex-1 bg-primary rounded-t-sm"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-4 border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest">Model Confidence</span>
+<span class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">High</span>
+</div>
+<div class="text-2xl font-bold leading-tight">94.2%</div>
+<div class="mt-4 h-8 w-full flex items-end gap-[2px]">
+<div class="h-full flex-1 bg-secondary/20 rounded-t-sm"></div>
+<div class="h-full flex-1 bg-secondary/30 rounded-t-sm"></div>
+<div class="h-full flex-1 bg-secondary/40 rounded-t-sm"></div>
+<div class="h-full flex-1 bg-secondary/50 rounded-t-sm"></div>
+<div class="h-[95%] flex-1 bg-secondary/60 rounded-t-sm"></div>
+<div class="h-[96%] flex-1 bg-secondary/70 rounded-t-sm"></div>
+<div class="h-[94%] flex-1 bg-secondary/80 rounded-t-sm"></div>
+<div class="h-[95%] flex-1 bg-secondary/90 rounded-t-sm"></div>
+<div class="h-[94%] flex-1 bg-secondary rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Central Chart -->
+<section class="bg-white dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-border-light dark:border-border-dark flex flex-col gap-6">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h3 class="text-lg font-bold">Actual vs Forecast Wind Generation</h3>
+<p class="text-xs text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider mt-1">Timeseries Analysis — Cluster: North Sea</p>
+</div>
+<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="text-[11px] font-bold text-text-muted-light dark:text-text-muted-dark">Actual (MW)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<span class="text-[11px] font-bold text-text-muted-light dark:text-text-muted-dark">Forecast (MW)</span>
+</div>
+</div>
+</div>
+<div class="w-full h-[360px] relative mt-4">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 300">
+<defs>
+<lineargradient id="area-grad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="5%" stop-color="#2463eb" stop-opacity="0.1"></stop>
+<stop offset="95%" stop-color="#2463eb" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0 250 C 50 250, 100 150, 150 180 C 200 210, 250 100, 300 120 C 350 140, 400 80, 450 90 C 500 100, 550 180, 600 160 C 650 140, 700 220, 750 200 C 800 180, 850 120, 900 140 C 950 160, 1000 200, 1000 200" fill="none" stroke="#2463eb" stroke-linecap="round" stroke-width="2.5"></path>
+<path d="M0 240 C 50 240, 100 160, 150 170 C 200 180, 250 110, 300 130 C 350 150, 400 90, 450 80 C 500 70, 550 190, 600 170 C 650 150, 700 210, 750 190 C 800 170, 850 130, 900 150 C 950 170, 1000 190, 1000 190" fill="none" stroke="#16a34a" stroke-dasharray="4,4" stroke-linecap="round" stroke-width="2.5"></path>
+<g class="stroke-border-light dark:stroke-border-dark opacity-30" stroke="currentColor" stroke-width="1">
+<line x1="0" x2="1000" y1="250" y2="250"></line>
+<line x1="0" x2="1000" y1="187.5" y2="187.5"></line>
+<line x1="0" x2="1000" y1="125" y2="125"></line>
+<line x1="0" x2="1000" y1="62.5" y2="62.5"></line>
+<line x1="0" x2="1000" y1="0" y2="0"></line>
+</g>
+<g class="text-[10px] fill-text-muted-light dark:fill-text-muted-dark font-medium">
+<text x="0" y="285">00:00</text>
+<text x="250" y="285">12:00</text>
+<text x="500" y="285">24:00</text>
+<text x="750" y="285">36:00</text>
+<text x="960" y="285">48:00</text>
+</g>
+</svg>
+<!-- Tooltip Simulation -->
+<div class="absolute top-1/4 left-1/3 bg-slate-900/95 dark:bg-white text-white dark:text-slate-900 p-3 rounded-lg shadow-2xl text-[11px] backdrop-blur-md border border-white/20">
+<div class="font-bold border-b border-white/10 dark:border-slate-200 pb-1.5 mb-1.5">Oct 24, 14:00</div>
+<div class="space-y-1">
+<div class="flex justify-between gap-6"><span>Forecast:</span> <span class="font-bold">128.4 MW</span></div>
+<div class="flex justify-between gap-6"><span>Actual:</span> <span class="font-bold">112.8 MW</span></div>
+<div class="flex justify-between gap-6 pt-1 border-t border-white/5 mt-1"><span>Deviation:</span> <span class="font-bold text-red-400 dark:text-red-600">+15.6 MW</span></div>
+</div>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Insights & Alerts -->
+<section class="lg:col-span-1 flex flex-col gap-4">
+<div class="bg-white dark:bg-surface-dark rounded-xl p-5 shadow-sm border border-border-light dark:border-border-dark flex-1">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">bolt</span>
+<h3 class="font-bold text-sm">Insights &amp; Alerts</h3>
+</div>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">2 NEW</span>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-lg">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-red-500 !text-sm">error</span>
+<span class="text-[11px] font-bold text-red-800 dark:text-red-400 uppercase tracking-wider">Critical Bias</span>
+</div>
+<p class="text-[11px] text-red-800/80 dark:text-red-400/80 leading-snug">North Sea clusters showing &gt;15% negative bias over last 3 hours. Model drift suspected.</p>
+</div>
+<div class="p-3 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-lg">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-amber-500 !text-sm">warning</span>
+<span class="text-[11px] font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider">Model Divergence</span>
+</div>
+<p class="text-[11px] text-amber-800/80 dark:text-amber-400/80 leading-snug">ECMWF and GFS outputs diverging significantly (+4.2 MW) for Horizon H+48.</p>
+</div>
+<div class="p-3 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-lg">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-blue-500 !text-sm">info</span>
+<span class="text-[11px] font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">Optimization</span>
+</div>
+<p class="text-[11px] text-blue-800/80 dark:text-blue-400/80 leading-snug">Performance improved by 2.1% after atmospheric pressure parameter adjustment.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Performance Discrepancy Log -->
+<section class="lg:col-span-2">
+<div class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark h-full">
+<div class="p-5 border-b border-border-light dark:border-border-dark flex justify-between items-center">
+<h3 class="font-bold text-sm">Performance Discrepancy Log</h3>
+<button class="text-[11px] font-bold text-primary hover:underline">Download CSV</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 text-[10px] text-text-muted-light dark:text-text-muted-dark uppercase tracking-widest font-bold border-b border-border-light dark:border-border-dark">
+<th class="px-5 py-3">Timestamp</th>
+<th class="px-5 py-3">Cluster / Station</th>
+<th class="px-5 py-3">Actual</th>
+<th class="px-5 py-3">Forecast</th>
+<th class="px-5 py-3 text-right">Variance</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-light dark:divide-border-dark">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-5 py-3 text-[11px] font-medium">Today, 10:15</td>
+<td class="px-5 py-3 text-[11px] text-text-muted-light dark:text-text-muted-dark">Dogger Bank A</td>
+<td class="px-5 py-3 text-[11px] font-bold">42.5 MW</td>
+<td class="px-5 py-3 text-[11px]">40.2 MW</td>
+<td class="px-5 py-3 text-[11px] text-right text-red-500 font-bold">+2.3 (5.7%)</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-5 py-3 text-[11px] font-medium">Today, 09:45</td>
+<td class="px-5 py-3 text-[11px] text-text-muted-light dark:text-text-muted-dark">Hornsea Two</td>
+<td class="px-5 py-3 text-[11px] font-bold">12.8 MW</td>
+<td class="px-5 py-3 text-[11px]">13.1 MW</td>
+<td class="px-5 py-3 text-[11px] text-right text-secondary font-bold">-0.3 (2.3%)</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-5 py-3 text-[11px] font-medium">Today, 09:15</td>
+<td class="px-5 py-3 text-[11px] text-text-muted-light dark:text-text-muted-dark">North Sea East</td>
+<td class="px-5 py-3 text-[11px] font-bold">95.2 MW</td>
+<td class="px-5 py-3 text-[11px]">94.8 MW</td>
+<td class="px-5 py-3 text-[11px] text-right font-bold text-text-muted-light">+0.4 (0.4%)</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<td class="px-5 py-3 text-[11px] font-medium">Today, 08:45</td>
+<td class="px-5 py-3 text-[11px] text-text-muted-light dark:text-text-muted-dark">Westermost Rough</td>
+<td class="px-5 py-3 text-[11px] font-bold">18.4 MW</td>
+<td class="px-5 py-3 text-[11px]">15.2 MW</td>
+<td class="px-5 py-3 text-[11px] text-right text-red-500 font-bold">+3.2 (21.0%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>
