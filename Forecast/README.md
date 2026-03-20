@@ -39,11 +39,3 @@ The dashboard will be available at `http://localhost:5173`.
 - **Error Metrics**: Calculated Mean Absolute Error (MAE), Root Mean Square Error (RMSE), and Model Bias across a sliding 48h horizon.
 - **Reliability Recommendation**: Based on P95 quantile analysis of historical generation (Jan 2025 onwards), the system identifies the "firm" capacity slice of wind generation that can be reliably expected to meet demand even in low-wind scenarios.
 
-## 🤖 AI Disclosure
-**Note**: This application, including its frontend components and backend services, was architected and implemented using **Antigravity AI (Google DeepMind)** as a pair programmer. Extensive cross-functional refactoring, data processing logic, and statistical derivation models were assisted by AI agents to achieve production-grade modularity and code quality.
-
-## 🎥 YouTube Demo & Analysis Walkthrough
-- [Youtube Unlisted Video Placeholder]
-
----
-Developed for the Full Stack SWE Challenge.
